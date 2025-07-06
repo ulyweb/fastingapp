@@ -11,44 +11,55 @@
 </head>
 <body>
   <div class="app">
-    <div class="header">
+    <header>
       <h1>Fasting Tracker</h1>
-      <button id="theme-toggle">Toggle Theme</button>
-      <select id="timer-type">
-        <option value="digital">Digital Timer</option>
-        <option value="analog">Analog Timer</option>
-      </select>
-    </div>
+      <div class="controls">
+        <button id="theme-toggle">Toggle Theme</button>
+        <select id="timer-type">
+          <option value="digital">Digital Timer</option>
+          <option value="analog">Analog Timer</option>
+        </select>
+      </div>
+    </header>
 
-    <div class="plan-selector">
-      <label for="plan">Select Fasting Plan:</label>
-      <select id="plan">
-        <option value="16">16:8 Intermittent (16 hours)</option>
-        <option value="18">18:6 Intermittent (18 hours)</option>
-        <option value="13">13-Hour Circadian</option>
-        <option value="36">36-Hour Monk Fast</option>
-      </select>
-    </div>
+    <section class="plans">
+      <div class="plan-card selected" data-hours="16">
+        <h3>16:8 Intermittent</h3>
+        <p>Fast for 16 hours, eat in an 8-hour window.</p>
+      </div>
+      <div class="plan-card" data-hours="18">
+        <h3>18:6 Intermittent</h3>
+        <p>Fast for 18 hours, eat in a 6-hour window.</p>
+      </div>
+      <div class="plan-card" data-hours="13">
+        <h3>13-Hour Circadian</h3>
+        <p>Align eating with your sleep/wake cycle.</p>
+      </div>
+      <div class="plan-card" data-hours="36">
+        <h3>36-Hour Monk Fast</h3>
+        <p>A full day of fasting for metabolic reset.</p>
+      </div>
+    </section>
 
-    <div class="timer">
+    <section class="timer-section">
       <canvas id="analog-timer" width="200" height="200" style="display: none;"></canvas>
-      <span id="digital-timer">00:00:00</span>
-    </div>
+      <div id="digital-timer">00:00:00</div>
+    </section>
 
-    <div class="controls">
-      <button id="start-btn">Start Fast</button>
+    <section class="action-buttons">
+      <button id="start-btn">Start 16-Hour Fast</button>
       <button id="stop-btn" disabled>Stop Fast</button>
-    </div>
+    </section>
 
-    <div class="achievements">
+    <section class="achievements">
       <h2>Achievements</h2>
       <ul id="achievements-list"></ul>
-    </div>
+    </section>
 
-    <div class="history">
+    <section class="history">
       <h2>Fasting History</h2>
       <canvas id="history-chart" width="400" height="200"></canvas>
-    </div>
+    </section>
   </div>
 
   <script src="script.js"></script>
