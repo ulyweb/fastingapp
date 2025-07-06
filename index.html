@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fasting Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="moon-icon">🌙</div>
+      <h1>Ready for your next fast?</h1>
+      <p>Select a plan below to get started.</p>
+    </div>
+
+    <div class="plans">
+      <div class="plan-card selected" data-hours="16">
+        <h3>16:8 Intermittent (16 hours)</h3>
+        <p>Fast for 16 hours, eat in an 8-hour window.</p>
+      </div>
+      <div class="plan-card" data-hours="18">
+        <h3>18:6 Intermittent (18 hours)</h3>
+        <p>Fast for 18 hours, eat in a 6-hour window.</p>
+      </div>
+      <div class="plan-card" data-hours="20">
+        <h3>20:4 Warrior Diet (20 hours)</h3>
+        <p>Fast for 20 hours, eat in a 4-hour window.</p>
+      </div>
+      <div class="plan-card" data-hours="13">
+        <h3>13-Hour Circadian (13 hours)</h3>
+        <p>Align your eating with your sleep/wake cycle.</p>
+      </div>
+      <div class="plan-card" data-hours="36">
+        <h3>36-Hour Monk Fast (36 hours)</h3>
+        <p>A full day of fasting for metabolic reset.</p>
+      </div>
+    </div>
+
+    <button id="start-btn">⚡ Start 16-Hour Fast</button>
+
+    <div class="timer-display">
+      <span id="timer">00:00:00</span>
+    </div>
+
+    <div class="control-btns">
+      <button id="stop-btn" disabled>Stop Fast</button>
+    </div>
+
+    <div class="achievements">
+      <h2>🏆 Achievements</h2>
+      <ul id="achievements-list"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
