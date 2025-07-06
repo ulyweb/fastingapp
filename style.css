@@ -1,0 +1,103 @@
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --accent: #58a6ff;
+  --text: #c9d1d9;
+  --font: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  padding: 40px 20px;
+}
+
+.app {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.moon-icon {
+  font-size: 3rem;
+}
+
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-card {
+  background: var(--card-bg);
+  border: 2px solid transparent;
+  padding: 16px;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.plan-card:hover {
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+.plan-card.selected {
+  border-color: var(--accent);
+  background-color: #1f2937;
+}
+
+button {
+  width: 100%;
+  background-color: var(--accent);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  margin: 20px 0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+button:hover {
+  transform: scale(1.05);
+}
+button:disabled {
+  background: #3a3a3a;
+  cursor: not-allowed;
+}
+
+.timer-display {
+  font-size: 3rem;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--accent);
+}
+
+.control-btns {
+  display: flex;
+  justify-content: center;
+}
+
+.achievements {
+  margin-top: 30px;
+}
+
+#achievements-list {
+  list-style: none;
+  padding: 0;
+}
+#achievements-list li {
+  background: #1f2937;
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 6px;
+}
