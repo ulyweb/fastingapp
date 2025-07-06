@@ -1,79 +1,52 @@
+let fastingHours = 16;
 let startTime = null;
 let timerInterval = null;
-let fastingPlan = 16; // Default to 16:8
 let isAnalog = false;
+let fastingHistory = JSON.parse(localStorage.getItem('fastingHistory')) || [];
+
 const digitalTimer = document.getElementById('digital-timer');
 const analogTimer = document.getElementById('analog-timer');
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
-const planSelect = document.getElementById('plan');
+const planCards = document.querySelectorAll('.plan-card');
 const achievementsList = document.getElementById('achievements-list');
 const historyChartCtx = document.getElementById('history-chart').getContext('2d');
 const themeToggle = document.getElementById('theme-toggle');
 const timerTypeSelect = document.getElementById('timer-type');
 
-let fastingHistory = JSON.parse(localStorage.getItem('fastingHistory')) || [];
-renderHistory();
-updateAchievements();
-
-planSelect.addEventListener('change', () => {
-  fastingPlan = parseInt(planSelect.value);
-});
-
+// Handle theme toggle
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark');
 });
 
+// Handle timer type change
 timerTypeSelect.addEventListener('change', () => {
   isAnalog = timerTypeSelect.value === 'analog';
   digitalTimer.style.display = isAnalog ? 'none' : 'block';
   analogTimer.style.display = isAnalog ? 'block' : 'none';
 });
 
-function formatTime(duration) {
-  const hrs = Math.floor(duration / 3600).toString().padStart(2, '0');
-  const mins = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
-  const secs = Math.floor(duration % 60).toString().padStart(2, '0');
-  return `${hrs}:${mins}:${secs}`;
-}
+// Plan card selection
+planCards.forEach(card => {
+  card.addEventListener('click', () => {
+    planCards.forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    fastingHours = parseInt(card.dataset.hours);
+    startBtn.textContent = `Start ${fastingHours}-Hour Fast`;
+  });
+});
 
-function updateTimer() {
-  const now = new Date();
-  const elapsed = Math.floor((now - startTime) / 1000);
-  if (isAnalog) {
-    drawAnalogTimer(elapsed);
-  } else {
-    digitalTimer.textContent = formatTime(elapsed);
-  }
-}
-
-function drawAnalogTimer(elapsed) {
-  const ctx = analogTimer.getContext('2d');
-  const radius = analogTimer.height / 2;
-  ctx.clearRect(0, 0, analogTimer.width, analogTimer.height);
-  ctx.beginPath();
-  ctx.arc(radius, radius, radius - 10, 0, 2 * Math.PI);
-  ctx.strokeStyle = '#ccc';
-  ctx.lineWidth = 10;
-  ctx.stroke();
-
-  const endAngle = (elapsed / (fastingPlan * 3600)) * 2 * Math.PI;
-  ctx.beginPath();
-  ctx.arc(radius, radius, radius - 10, -Math.PI / 2, endAngle - Math.PI / 2);
-  ctx.strokeStyle = '#58a6ff';
-  ctx.lineWidth = 10;
-  ctx.stroke();
-}
-
+// Start fasting
 startBtn.addEventListener('click', () => {
   startTime = new Date();
   timerInterval = setInterval(updateTimer, 1000);
   startBtn.disabled = true;
   stopBtn.disabled = false;
   scheduleNotification('Fasting Started', 'Your fasting period has begun.');
-  scheduleNotification('Fasting Complete', 'Your fasting period has ended.', fastingPlan * 60 * 60 * 1000);
+  scheduleNotification('Fasting Complete', 'Your fasting is complete!', fastingHours * 60 * 60 * 1000);
 });
 
+// Stop fasting
 stopBtn.addEventListener('click', () => {
   clearInterval(timerInterval);
   const endTime = new Date();
@@ -81,7 +54,7 @@ stopBtn.addEventListener('click', () => {
   fastingHistory.push({
     start: startTime.toLocaleString(),
     end: endTime.toLocaleString(),
-    duration: duration
+    duration
   });
   localStorage.setItem('fastingHistory', JSON.stringify(fastingHistory));
   renderHistory();
@@ -91,69 +64,109 @@ stopBtn.addEventListener('click', () => {
   stopBtn.disabled = true;
 });
 
+// Timer update
+function updateTimer() {
+  const now = new Date();
+  const elapsed = Math.floor((now - startTime) / 1000);
+  isAnalog ? drawAnalogTimer(elapsed) : digitalTimer.textContent = formatTime(elapsed);
+}
+
+// Time formatter
+function formatTime(seconds) {
+  const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const secs = String(seconds % 60).padStart(2, '0');
+  return `${hrs}:${mins}:${secs}`;
+}
+
+// Draw analog timer
+function drawAnalogTimer(elapsed) {
+  const ctx = analogTimer.getContext('2d');
+  const radius = analogTimer.width / 2;
+  const progress = elapsed / (fastingHours * 3600);
+  ctx.clearRect(0, 0, analogTimer.width, analogTimer.height);
+
+  // Background circle
+  ctx.beginPath();
+  ctx.arc(radius, radius, radius - 10, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 8;
+  ctx.stroke();
+
+  // Progress arc
+  ctx.beginPath();
+  ctx.arc(radius, radius, radius - 10, -Math.PI / 2, (2 * Math.PI * progress) - Math.PI / 2);
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 8;
+  ctx.stroke();
+}
+
+// Chart rendering
 function renderHistory() {
-  const labels = fastingHistory.map((session, index) => `Session ${index + 1}`);
-  const data = fastingHistory.map(session => session.duration / 3600); // Convert to hours
+  const labels = fastingHistory.map((_, i) => `Session ${i + 1}`);
+  const durations = fastingHistory.map(s => +(s.duration / 3600).toFixed(2));
 
   new Chart(historyChartCtx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
-        label: 'Fasting Duration (hrs)',
-        data: data,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)'
+        label: 'Hours Fasted',
+        data: durations,
+        backgroundColor: 'rgba(88, 166, 255, 0.6)',
+        borderColor: '#58a6ff',
+        borderWidth: 1
       }]
     },
     options: {
       responsive: true,
       scales: {
-        y: {
-          beginAtZero: true
-        }
+        y: { beginAtZero: true }
       }
     }
   });
 }
 
+// Achievement unlocks
 function updateAchievements() {
   achievementsList.innerHTML = '';
-  const totalHours = fastingHistory.reduce((sum, session) => sum + session.duration, 0) / 3600;
-  const longestFast = Math.max(...fastingHistory.map(session => session.duration), 0) / 3600;
+  const totalHours = fastingHistory.reduce((sum, s) => sum + s.duration, 0) / 3600;
+  const longest = Math.max(...fastingHistory.map(s => s.duration), 0) / 3600;
 
   const achievements = [];
+  if (fastingHistory.length >= 5) achievements.push("🎯 Completed 5 Fasts");
+  if (totalHours >= 50) achievements.push("🏆 50 Total Hours Fasted");
+  if (longest >= 24) achievements.push("🔥 Longest Fast: 24+ hours");
+  if (fastingHistory.length >= 10) achievements.push("🥇 10 Fasts Completed");
 
-  if (totalHours >= 50) achievements.push('🏆 Total Fasting Time: 50+ hours');
-  if (longestFast >= 24) achievements.push('🥇 Longest Fast: 24+ hours');
-  if (fastingHistory.length >= 10) achievements.push('🎯 Completed 10 Fasts');
-
-  achievements.forEach(achievement => {
+  achievements.forEach(text => {
     const li = document.createElement('li');
-    li.textContent = achievement;
+    li.textContent = text;
     achievementsList.appendChild(li);
   });
 }
 
+// Notifications
 function scheduleNotification(title, body, delay = 0) {
+  if (!('Notification' in window)) return;
   if (Notification.permission === 'granted') {
-    setTimeout(() => {
-      new Notification(title, { body });
-    }, delay);
+    setTimeout(() => new Notification(title, { body }), delay);
   } else if (Notification.permission !== 'denied') {
     Notification.requestPermission().then(permission => {
       if (permission === 'granted') {
-        setTimeout(() => {
-          new Notification(title, { body });
-        }, delay);
+        setTimeout(() => new Notification(title, { body }), delay);
       }
     });
   }
 }
 
+// Initial render
+renderHistory();
+updateAchievements();
+
 // Register service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('✅ Service Worker Registered'))
+    .catch(err => console.error('SW Error:', err));
 }
-``
-::contentReference[oaicite:15]{index=15}
- 
