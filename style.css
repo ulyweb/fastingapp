@@ -1,36 +1,69 @@
 :root {
-  --bg-color: #f4f4f4;
-  --text-color: #333;
+  --bg-color: #ffffff;
+  --text-color: #000000;
   --accent-color: #58a6ff;
+  --card-bg: #f0f0f0;
 }
 
 body.dark {
   --bg-color: #0d1117;
   --text-color: #c9d1d9;
   --accent-color: #58a6ff;
+  --card-bg: #161b22;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
 }
 
 .app {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 30px;
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
 }
 
-.header {
+header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.timer {
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.plans {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.plan-card {
+  background-color: var(--card-bg);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px;
+  flex: 1 1 calc(50% - 10px);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.plan-card:hover {
+  transform: scale(1.02);
+  border-color: var(--accent-color);
+}
+
+.plan-card.selected {
+  border-color: var(--accent-color);
+}
+
+.timer-section {
   text-align: center;
   margin: 20px 0;
 }
@@ -39,30 +72,38 @@ body {
   font-size: 48px;
 }
 
-.controls {
+.action-buttons {
   text-align: center;
-  margin-bottom: 30px;
+  margin: 20px 0;
 }
 
 button {
-  font-size: 16px;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
   padding: 10px 20px;
-  margin: 0 10px;
+  margin: 0 5px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .achievements, .history {
-  margin-top: 30px;
+  margin: 20px 0;
 }
 
 #achievements-list {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 
 #achievements-list li {
-  background: #e2e2e2;
+  background-color: var(--card-bg);
   margin: 5px 0;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 5px;
 }
