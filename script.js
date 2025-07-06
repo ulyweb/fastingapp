@@ -14,12 +14,12 @@ const historyChartCtx = document.getElementById('history-chart').getContext('2d'
 const themeToggle = document.getElementById('theme-toggle');
 const timerTypeSelect = document.getElementById('timer-type');
 
-// Handle theme toggle
+// Theme toggle
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark');
 });
 
-// Handle timer type change
+// Timer type toggle
 timerTypeSelect.addEventListener('change', () => {
   isAnalog = timerTypeSelect.value === 'analog';
   digitalTimer.style.display = isAnalog ? 'none' : 'block';
@@ -42,8 +42,8 @@ startBtn.addEventListener('click', () => {
   timerInterval = setInterval(updateTimer, 1000);
   startBtn.disabled = true;
   stopBtn.disabled = false;
-  scheduleNotification('Fasting Started', 'Your fasting period has begun.');
-  scheduleNotification('Fasting Complete', 'Your fasting is complete!', fastingHours * 60 * 60 * 1000);
+  scheduleNotification('Fasting Started', 'Your fasting has begun.');
+  scheduleNotification('Fasting Complete', 'Time to break your fast!', fastingHours * 3600000);
 });
 
 // Stop fasting
@@ -71,7 +71,7 @@ function updateTimer() {
   isAnalog ? drawAnalogTimer(elapsed) : digitalTimer.textContent = formatTime(elapsed);
 }
 
-// Time formatter
+// Format seconds into HH:MM:SS
 function formatTime(seconds) {
   const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
   const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
@@ -79,21 +79,19 @@ function formatTime(seconds) {
   return `${hrs}:${mins}:${secs}`;
 }
 
-// Draw analog timer
+// Draw analog timer circle
 function drawAnalogTimer(elapsed) {
   const ctx = analogTimer.getContext('2d');
   const radius = analogTimer.width / 2;
   const progress = elapsed / (fastingHours * 3600);
   ctx.clearRect(0, 0, analogTimer.width, analogTimer.height);
 
-  // Background circle
   ctx.beginPath();
   ctx.arc(radius, radius, radius - 10, 0, 2 * Math.PI);
   ctx.strokeStyle = '#444';
   ctx.lineWidth = 8;
   ctx.stroke();
 
-  // Progress arc
   ctx.beginPath();
   ctx.arc(radius, radius, radius - 10, -Math.PI / 2, (2 * Math.PI * progress) - Math.PI / 2);
   ctx.strokeStyle = '#58a6ff';
@@ -101,7 +99,7 @@ function drawAnalogTimer(elapsed) {
   ctx.stroke();
 }
 
-// Chart rendering
+// Render chart
 function renderHistory() {
   const labels = fastingHistory.map((_, i) => `Session ${i + 1}`);
   const durations = fastingHistory.map(s => +(s.duration / 3600).toFixed(2));
@@ -120,14 +118,12 @@ function renderHistory() {
     },
     options: {
       responsive: true,
-      scales: {
-        y: { beginAtZero: true }
-      }
+      scales: { y: { beginAtZero: true } }
     }
   });
 }
 
-// Achievement unlocks
+// Show achievements
 function updateAchievements() {
   achievementsList.innerHTML = '';
   const totalHours = fastingHistory.reduce((sum, s) => sum + s.duration, 0) / 3600;
@@ -160,11 +156,11 @@ function scheduleNotification(title, body, delay = 0) {
   }
 }
 
-// Initial render
+// Init
 renderHistory();
 updateAchievements();
 
-// Register service worker
+// PWA Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('✅ Service Worker Registered'))
